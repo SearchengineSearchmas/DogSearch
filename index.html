@@ -171,18 +171,28 @@ function search(){
   const enc=encodeURIComponent(q);
   content.innerHTML="<p>Loading results...</p>";
 
-  if(tab==="all"){
-    fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://duckduckgo.com/html/?q='+enc)}`)
-    .then(r=>r.json())
-    .then(d=>{
-      const doc=new DOMParser().parseFromString(d.contents,"text/html");
-      const results=[...doc.querySelectorAll('.result__a')];
-      if(!results.length){content.innerHTML="<p>No results found.</p>";return;}
-      content.innerHTML=results.slice(0,10).map(a=>{
-        return `<a class="card" href="${a.href}" target="_blank"><strong>${a.textContent}</strong></a>`;
+ if(tab === "all"){
+  fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://duckduckgo.com/html/?q=' + enc)}`)
+    .then(r => r.json())
+    .then(d => {
+      const doc = new DOMParser().parseFromString(d.contents, "text/html");
+      const results = [...doc.querySelectorAll('.result')]; // full result block
+      if(!results.length){
+        content.innerHTML = "<p>No results found.</p>";
+        return;
+      }
+      content.innerHTML = results.slice(0, 10).map(r => {
+        const a = r.querySelector('.result__a');
+        const snippet = r.querySelector('.result__snippet');
+        return `<a class="card" href="${a.href}" target="_blank">
+                  <strong>${a.textContent}</strong>
+                  <p>${snippet ? snippet.textContent : ''}</p>
+                </a>`;
       }).join('');
-    }).catch(()=>content.innerHTML="<p>Error loading results.</p>");
-  }
+    })
+    .catch(() => content.innerHTML = "<p>Error loading results.</p>");
+}
+
 
   if(tab==="images"){
     fetch(`https://api.unsplash.com/search/photos?query=${enc}&per_page=18`,{
