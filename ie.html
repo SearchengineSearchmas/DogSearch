@@ -2,119 +2,108 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DogSearch IE</title>
+<title>DogSearch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="https://png.pngtree.com/png-clipart/20230916/original/pngtree-golden-retriever-dog-in-a-round-circle-clipart-vector-png-image_12248318.png">
-
 <style>
-html, body {
-  margin:0; padding:0; font-family: Arial, sans-serif; background-color:#FFDAB9; text-align:center;
-}
-#home, #results {
-  height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center;
-}
-.logo { font-size:36px; font-weight:bold; margin-bottom:20px; }
-.search-box { margin-top:20px; }
-input { padding:10px; width:250px; font-size:16px; border-radius:8px; border:1px solid #ccc; }
-.tabs { margin:20px 0; }
-.tab { display:inline-block; padding:10px 15px; margin:0 5px; border:1px solid #ccc; cursor:pointer; }
-.tab.active { background-color:#1a73e8; color:#fff; }
-.card { display:block; padding:10px; margin:10px auto; border:1px solid #ccc; width:300px; text-decoration:none; color:#000; }
-.back { position:absolute; top:10px; left:10px; font-size:20px; cursor:pointer; }
-#content { width:100%; max-width:600px; margin-top:20px; text-align:center; }
+/* Simple IE-friendly styling */
+html, body {margin:0; padding:0; font-family: Arial, sans-serif; background-color: #FFDAB9; text-align: center;}
+#home, #results {min-height: 100vh; display: block; padding-top:50px;}
+.logo {font-size: 36px; font-weight:bold; margin-bottom: 20px;}
+.search-box {margin-top: 20px;}
+input {padding:10px; width:250px; font-size:16px; border-radius:8px; border:1px solid #ccc;}
+.tabs {margin: 20px 0;}
+.tab {display: inline-block; padding:10px 15px; margin:0 5px; border:1px solid #ccc; cursor:pointer;}
+.tab.active {background-color: #1a73e8; color: #fff;}
+.card {display:block; padding:10px; margin:10px auto; border:1px solid #ccc; width:300px; text-decoration:none; color:#000;}
+button {padding:8px 12px; margin-top:10px; cursor:pointer;}
 </style>
 </head>
 <body>
 
 <div id="home">
-  <div class="logo">DogSearch</div>
-  <form class="search-box" onsubmit="startSearch(event)">
+  <div class="logo">DogSearch 🐾</div>
+  <form class="search-box" onsubmit="return startSearch();">
     <input id="qHome" placeholder="Search the web">
+    <button type="submit">Search</button>
   </form>
 </div>
 
-<div id="results">
-  <div class="back" onclick="goHome()">⬅ Back</div>
+<div id="results" style="display:none;">
   <div class="tabs">
-    <div class="tab active" data-tab="all">All</div>
-    <div class="tab" data-tab="images">Images</div>
-    <div class="tab" data-tab="news">News</div>
+    <div class="tab active" id="tabAll">All</div>
+    <div class="tab" id="tabImages">Images</div>
+    <div class="tab" id="tabNews">News</div>
   </div>
   <div id="content"></div>
+  <div style="margin-top:20px;">
+    <button onclick="goHome();">⬅ Back</button>
+  </div>
 </div>
 
 <script>
-var tab="all";
-var homeEl=document.getElementById("home");
-var resEl=document.getElementById("results");
-var qHome=document.getElementById("qHome");
-var content=document.getElementById("content");
+var currentTab = "all";
+var homeEl = document.getElementById("home");
+var resEl = document.getElementById("results");
+var qHome = document.getElementById("qHome");
+var content = document.getElementById("content");
 
-function startSearch(e){
-  e.preventDefault();
-  var q=qHome.value.trim();
-  if(!q) return;
-  showResults(q);
+function startSearch() {
+  var query = qHome.value.replace(/^\s+|\s+$/g,'');
+  if(!query) return false;
+  showResults(query);
+  return false;
 }
 
-function showResults(q){
-  homeEl.style.display="none";
-  resEl.style.display="block";
-  search(q);
+function goHome() {
+  resEl.style.display = "none";
+  homeEl.style.display = "block";
+  content.innerHTML = "";
+  currentTab = "all";
+  document.getElementById("tabAll").className = "tab active";
+  document.getElementById("tabImages").className = "tab";
+  document.getElementById("tabNews").className = "tab";
 }
 
-function goHome(){
-  resEl.style.display="none";
-  homeEl.style.display="flex";
-  content.innerHTML="";
-  document.querySelectorAll('.tab').forEach(function(t){t.className='tab';});
-  document.querySelector('.tab[data-tab="all"]').className='tab active';
-  tab="all";
+function setTab(tabName) {
+  currentTab = tabName;
+  document.getElementById("tabAll").className = "tab" + (tabName=="all"?" active":"");
+  document.getElementById("tabImages").className = "tab" + (tabName=="images"?" active":"");
+  document.getElementById("tabNews").className = "tab" + (tabName=="news"?" active":"");
+  var query = qHome.value.replace(/^\s+|\s+$/g,'');
+  if(query) search(query);
 }
 
-document.querySelectorAll(".tab").forEach(function(t){
-  t.onclick=function(){
-    document.querySelectorAll('.tab').forEach(function(x){x.className='tab';});
-    t.className='tab active';
-    tab=t.getAttribute('data-tab');
-    var q=qHome.value.trim();
-    if(q) search(q);
-  };
-});
+/* Add click events */
+document.getElementById("tabAll").onclick = function(){ setTab("all"); };
+document.getElementById("tabImages").onclick = function(){ setTab("images"); };
+document.getElementById("tabNews").onclick = function(){ setTab("news"); };
 
-function search(q){
-  content.innerHTML="<p>Loading...</p>";
-  if(tab==="all"){
-    var url="https://api.duckduckgo.com/?q="+encodeURIComponent(q)+"&format=json&no_redirect=1&skip_disambig=1";
-    var xhr=new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange=function(){
-      if(xhr.readyState===4 && xhr.status===200){
-        try{
-          var data=JSON.parse(xhr.responseText);
-          var html="";
-          if(data.AbstractText){ html+='<div class="card">'+data.AbstractText+'</div>'; }
-          if(data.RelatedTopics){
-            for(var i=0;i<data.RelatedTopics.length;i++){
-              var t=data.RelatedTopics[i];
-              if(t.Text && t.FirstURL){ html+='<a class="card" href="'+t.FirstURL+'" target="_blank">'+t.Text+'</a>'; }
-            }
+function showResults(query) {
+  homeEl.style.display = "none";
+  resEl.style.display = "block";
+  search(query);
+}
+
+function search(query) {
+  content.innerHTML = "<p>Searching...</p>";
+  if(currentTab == "all") {
+    /* IE-friendly XMLHttpRequest to DuckDuckGo Instant Answer API */
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState==4 && xhr.status==200) {
+        try {
+          var data = JSON.parse(xhr.responseText);
+          var html = "";
+          if(data.AbstractText && data.AbstractText.length>0){
+            html += '<div class="card">'+data.Heading+'<br>'+data.AbstractText+'</div>';
+          } else {
+            html = '<div class="card">No instant answer found, try visiting <a href="https://duckduckgo.com/?q='+encodeURIComponent(query)+'" target="_blank">DuckDuckGo</a></div>';
           }
-          content.innerHTML=html || "<p>No results found</p>";
-        }catch(e){ content.innerHTML="<p>Error parsing results</p>"; }
+          content.innerHTML = html;
+        } catch(e){
+          content.innerHTML = '<div class="card">Error parsing results.</div>';
+        }
       }
     };
-    xhr.send();
-  }
-  if(tab==="images"){
-    content.innerHTML='<a class="card" href="https://www.bing.com/images/search?q='+encodeURIComponent(q)+'" target="_blank">Search on Bing</a>';
-  }
-  if(tab==="news"){
-    content.innerHTML='<a class="card" href="https://news.google.com/search?q='+encodeURIComponent(q)+'" target="_blank">Google News</a>'+
-                      '<a class="card" href="https://www.bing.com/news/search?q='+encodeURIComponent(q)+'" target="_blank">Bing News</a>';
-  }
-}
-</script>
-
-</body>
-</html>
+    xhr.open("GET","https://api.duckduckgo.com/?q="
