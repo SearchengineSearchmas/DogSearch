@@ -2,34 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DogSearch IE</title>
+<title>DogSearch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-html,body{margin:0;padding:0;font-family:Arial,sans-serif;}
-body{background-color:#fff;text-align:center;font-size:18px;}
-
+html,body{margin:0;padding:0;font-family:Arial,sans-serif;background-color:#FFDAB9;text-align:center;}
 #home, #results{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
-
-.logo{
-  font-size:36px;
-  font-weight:bold;
-}
+.logo{font-size:36px;font-weight:bold;margin-bottom:20px;}
 .search-box{margin-top:20px;}
 input{padding:10px;width:250px;font-size:16px;border-radius:8px;border:1px solid #ccc;}
-
 .tabs{margin:20px 0;}
 .tab{display:inline-block;padding:10px 15px;margin:0 5px;border:1px solid #ccc;cursor:pointer;}
 .tab.active{background-color:#1a73e8;color:#fff;}
-
 .card{display:block;padding:10px;margin:10px auto;border:1px solid #ccc;width:300px;text-decoration:none;color:#000;}
-
-body::before{
-  content:"🐶 🐕 🐾 🐶 🐕 🐾 🐶 🐕 🐾";
-  display:block;
-  font-size:32px;
-  margin-bottom:20px;
-}
 </style>
 </head>
 <body>
@@ -90,14 +74,46 @@ function goHome(){
 function search(){
   var q=qHome.value.trim();
   if(!q) return;
+
   if(tab==="all"){
-    content.innerHTML='<a class="card" href="https://duckduckgo.com/?q='+encodeURIComponent(q)+'" target="_blank">Search on DuckDuckGo</a>';
+    content.innerHTML="<p>Loading results...</p>";
+    var url="https://api.duckduckgo.com/?q="+encodeURIComponent(q)+"&format=json&no_redirect=1&pretty=1";
+    try{
+      var xhr=new XMLHttpRequest();
+      xhr.open("GET",url,true);
+      xhr.onreadystatechange=function(){
+        if(xhr.readyState===4 && xhr.status===200){
+          var data=JSON.parse(xhr.responseText);
+          var results=[];
+          if(data.AbstractURL && data.AbstractText){
+            results.push('<a class="card" href="'+data.AbstractURL+'" target="_blank">'+data.AbstractText+'</a>');
+          }
+          if(data.RelatedTopics){
+            for(var i=0;i<data.RelatedTopics.length;i++){
+              var topic=data.RelatedTopics[i];
+              if(topic.Text && topic.FirstURL){
+                results.push('<a class="card" href="'+topic.FirstURL+'" target="_blank">'+topic.Text+'</a>');
+              }
+            }
+          }
+          if(results.length===0) results.push('<p>No results found.</p>');
+          content.innerHTML=results.join("");
+        }
+      };
+      xhr.send();
+    }catch(e){
+      content.innerHTML="<p>Error loading results.</p>";
+    }
   }
+
   if(tab==="images"){
     content.innerHTML='<a class="card" href="https://www.bing.com/images/search?q='+encodeURIComponent(q)+'" target="_blank">Search Images on Bing</a>';
   }
+
   if(tab==="news"){
-    content.innerHTML='<a class="card" href="https://news.google.com/search?q='+encodeURIComponent(q)+'" target="_blank">Google News</a>';
+    content.innerHTML=
+      '<a class="card" href="https://news.google.com/search?q='+encodeURIComponent(q)+'" target="_blank">Google News</a>'+
+      '<a class="card" href="https://www.bing.com/news/search?q='+encodeURIComponent(q)+'" target="_blank">Bing News</a>';
   }
 }
 </script>
