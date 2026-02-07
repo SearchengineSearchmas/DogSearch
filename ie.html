@@ -4,115 +4,153 @@
 <meta charset="UTF-8">
 <title>DogSearch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="https://png.pngtree.com/png-clipart/20230916/original/pngtree-golden-retriever-dog-in-a-round-circle-clipart-vector-png-image_12248318.png">
 <style>
 html, body {
-  margin:0; padding:0; font-family:Arial,sans-serif; background-color:#FFDAB9; text-align:center;
+  margin:0;
+  padding:0;
+  font-family: Arial, sans-serif;
+  background-color: #FFDAB9;
+  text-align: center;
 }
+
 #home, #results {
-  min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
-.logo { font-size:36px; font-weight:bold; margin-bottom:20px; }
-.search-box { margin-top:20px; }
-input { padding:10px; width:250px; font-size:16px; border-radius:8px; border:1px solid #ccc; }
-#backButton {
-  position:absolute; top:10px; left:10px; font-size:20px; cursor:pointer; display:none;
+
+.logo {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
+
+.search-box {
+  margin-top: 20px;
+}
+
+input {
+  padding: 10px;
+  width: 250px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
 .tabs {
-  width:100%; max-width:500px; display:flex; justify-content:flex-start; margin:20px 0;
+  margin: 20px 0;
 }
-.tab { padding:10px 15px; margin-right:5px; border:1px solid #ccc; cursor:pointer; text-align:center; }
-.tab.active { background-color:#1a73e8; color:#fff; }
-#content { width:100%; max-width:600px; margin-top:10px; }
-.card { display:block; padding:10px; margin:10px auto; border:1px solid #ccc; width:300px; text-decoration:none; color:#000; }
+
+.tab {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.tab.active {
+  background-color: #1a73e8;
+  color: #fff;
+}
+
+#content {
+  margin-top: 20px;
+}
+
+.card-button {
+  display: block;
+  margin: 10px auto;
+  padding: 12px 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 200px;
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+
+.back {
+  cursor: pointer;
+  font-size: 22px;
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  display: none;
+}
 </style>
 </head>
 <body>
 
-<div id="backButton" onclick="goHome()">⬅ Back</div>
-
 <div id="home">
-  <div class="logo">DogSearch 🐾</div>
-  <form class="search-box" onsubmit="return startSearchIE()">
+  <div class="logo">DogSearch</div>
+  <form class="search-box" onsubmit="startSearch(event)">
     <input id="qHome" placeholder="Search the web">
   </form>
 </div>
 
-<div id="results" style="display:none;">
+<div id="results">
+  <div class="back" onclick="goHome()">⬅</div>
   <div class="tabs">
-    <div class="tab active" data-tab="all" onclick="setTab('all', this)">All</div>
-    <div class="tab" data-tab="images" onclick="setTab('images', this)">Images</div>
-    <div class="tab" data-tab="news" onclick="setTab('news', this)">News</div>
+    <div class="tab active" data-tab="all">All</div>
+    <div class="tab" data-tab="images">Images</div>
+    <div class="tab" data-tab="news">News</div>
   </div>
   <div id="content"></div>
 </div>
 
 <script>
-var homeEl = document.getElementById('home');
-var resEl = document.getElementById('results');
-var backBtn = document.getElementById('backButton');
-var qHome = document.getElementById('qHome');
-var content = document.getElementById('content');
-var currentTab = 'all';
+var homeEl = document.getElementById("home");
+var resEl = document.getElementById("results");
+var qHome = document.getElementById("qHome");
+var content = document.getElementById("content");
+var tabs = document.querySelectorAll(".tab");
+var backBtn = document.querySelector(".back");
+var tab = "all";
 
-function startSearchIE(){
-  var e = window.event || {};
-  if(e.preventDefault) e.preventDefault();
-  var q = qHome.value.trim();
-  if(!q) return false;
-  showResults(q);
-  return false;
+function startSearch(e) {
+  e.preventDefault();
+  showResults();
 }
 
-function showResults(q){
-  homeEl.style.display='none';
-  resEl.style.display='flex';
-  backBtn.style.display='block';
-  search(q);
+function showResults() {
+  homeEl.style.display = "none";
+  resEl.style.display = "flex";
+  backBtn.style.display = "block";
+  renderTab();
 }
 
-function goHome(){
-  homeEl.style.display='flex';
-  resEl.style.display='none';
-  backBtn.style.display='none';
+function goHome() {
+  resEl.style.display = "none";
+  homeEl.style.display = "flex";
+  backBtn.style.display = "none";
+  tab = "all";
+  tabs[0].className = "tab active";
+  tabs[1].className = "tab";
+  tabs[2].className = "tab";
 }
 
-function setTab(tab, el){
-  currentTab = tab;
-  var allTabs = document.querySelectorAll('.tab');
-  for(var i=0;i<allTabs.length;i++) allTabs[i].className='tab';
-  el.className='tab active';
-  search(qHome.value.trim());
-}
+tabs.forEach(function(t) {
+  t.onclick = function() {
+    tabs.forEach(function(x){ x.className="tab"; });
+    t.className = "tab active";
+    tab = t.dataset.tab;
+    renderTab();
+  };
+});
 
-function search(q){
-  if(!q) return;
-  content.innerHTML = "<p>Searching for '"+q+"'...</p>";
-
-  if(currentTab === 'all'){
-    var url = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://api.duckduckgo.com/?q=" + encodeURIComponent(q) + "&format=json&no_redirect=1&skip_disambig=1");
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState==4 && xhr.status==200){
-        try{
-          var data = JSON.parse(JSON.parse(xhr.responseText).contents);
-          var answer = data.AbstractText || "No instant answer found.";
-          content.innerHTML = "<p>"+answer+"</p>";
-        }catch(e){ content.innerHTML="<p>Error fetching results.</p>"; }
-      }
-    };
-    xhr.send();
-  }
-
-  if(currentTab === 'images'){
-    content.innerHTML = '<a class="card" href="https://www.bing.com/images/search?q=' + encodeURIComponent(q) + '" target="_blank">Search Images on Bing</a>';
-  }
-
-  if(currentTab === 'news'){
-    content.innerHTML = 
-      '<a class="card" href="https://news.google.com/search?q=' + encodeURIComponent(q) + '" target="_blank">Google News</a>' +
-      '<a class="card" href="https://www.bing.com/news/search?q=' + encodeURIComponent(q) + '" target="_blank">Bing News</a>';
+function renderTab() {
+  var query = qHome.value || "";
+  if(tab==="all") {
+    content.innerHTML =
+      '<a class="card-button" href="https://search.yahoo.com/search?p=' + encodeURIComponent(query) + '" target="_blank">Yahoo</a>' +
+      '<a class="card-button" href="https://www.bing.com/search?q=' + encodeURIComponent(query) + '" target="_blank">Bing</a>' +
+      '<a class="card-button" href="https://duckduckgo.com/?q=' + encodeURIComponent(query) + '" target="_blank">DuckDuckGo</a>';
+  } else {
+    // Everything else uses your normal DogSearch rendering
+    content.innerHTML = "<p>Normal DogSearch tab: " + tab + "</p>";
   }
 }
 </script>
