@@ -6,15 +6,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="https://png.pngtree.com/png-clipart/20230916/original/pngtree-golden-retriever-dog-in-a-round-circle-clipart-vector-png-image_12248318.png">
 <style>
-html, body { margin:0; padding:0; font-family:Arial,sans-serif; background-color:#FFDAB9; text-align:center; }
-#home, #results { min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+html, body {
+  margin:0; padding:0; font-family:Arial,sans-serif; background-color:#FFDAB9; text-align:center;
+}
+#home, #results {
+  min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative;
+}
 .logo { font-size:36px; font-weight:bold; margin-bottom:20px; }
 .search-box { margin-top:20px; }
 input { padding:10px; width:250px; font-size:16px; border-radius:8px; border:1px solid #ccc; }
-.tabs { margin:20px 0; }
-.tab { display:inline-block; padding:10px 15px; margin:0 5px; border:1px solid #ccc; cursor:pointer; }
+#backButton {
+  position:absolute; top:10px; left:10px; font-size:20px; cursor:pointer; display:none;
+}
+.tabs {
+  width:100%; max-width:500px; display:flex; justify-content:flex-start; margin:20px 0;
+}
+.tab { padding:10px 15px; margin-right:5px; border:1px solid #ccc; cursor:pointer; text-align:center; }
 .tab.active { background-color:#1a73e8; color:#fff; }
-#backButton { position:absolute; top:10px; left:10px; font-size:20px; cursor:pointer; display:none; }
+#content { width:100%; max-width:600px; margin-top:10px; }
 .card { display:block; padding:10px; margin:10px auto; border:1px solid #ccc; width:300px; text-decoration:none; color:#000; }
 </style>
 </head>
@@ -31,9 +40,9 @@ input { padding:10px; width:250px; font-size:16px; border-radius:8px; border:1px
 
 <div id="results" style="display:none;">
   <div class="tabs">
-    <div class="tab active" data-tab="all" onclick="setTab('all')">All</div>
-    <div class="tab" data-tab="images" onclick="setTab('images')">Images</div>
-    <div class="tab" data-tab="news" onclick="setTab('news')">News</div>
+    <div class="tab active" data-tab="all" onclick="setTab('all', this)">All</div>
+    <div class="tab" data-tab="images" onclick="setTab('images', this)">Images</div>
+    <div class="tab" data-tab="news" onclick="setTab('news', this)">News</div>
   </div>
   <div id="content"></div>
 </div>
@@ -68,11 +77,11 @@ function goHome(){
   backBtn.style.display='none';
 }
 
-function setTab(tab){
+function setTab(tab, el){
   currentTab = tab;
   var allTabs = document.querySelectorAll('.tab');
   for(var i=0;i<allTabs.length;i++) allTabs[i].className='tab';
-  event.target.className='tab active';
+  el.className='tab active';
   search(qHome.value.trim());
 }
 
