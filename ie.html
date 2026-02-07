@@ -2,108 +2,127 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DogSearch</title>
+<title>DogSearch IE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="https://png.pngtree.com/png-clipart/20230916/original/pngtree-golden-retriever-dog-in-a-round-circle-clipart-vector-png-image_12248318.png">
 <style>
-/* Simple IE-friendly styling */
-html, body {margin:0; padding:0; font-family: Arial, sans-serif; background-color: #FFDAB9; text-align: center;}
-#home, #results {min-height: 100vh; display: block; padding-top:50px;}
-.logo {font-size: 36px; font-weight:bold; margin-bottom: 20px;}
-.search-box {margin-top: 20px;}
-input {padding:10px; width:250px; font-size:16px; border-radius:8px; border:1px solid #ccc;}
-.tabs {margin: 20px 0;}
-.tab {display: inline-block; padding:10px 15px; margin:0 5px; border:1px solid #ccc; cursor:pointer;}
-.tab.active {background-color: #1a73e8; color: #fff;}
-.card {display:block; padding:10px; margin:10px auto; border:1px solid #ccc; width:300px; text-decoration:none; color:#000;}
-button {padding:8px 12px; margin-top:10px; cursor:pointer;}
+html,body{
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+  background-color:#FFDAB9;
+  text-align:center;
+}
+
+#home, #results{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  position:relative; /* for absolute back button */
+}
+
+.logo{
+  font-size:36px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+.search-box{
+  margin-top:20px;
+}
+
+input{
+  padding:10px;
+  width:250px;
+  font-size:16px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.tabs{
+  margin:20px 0;
+}
+
+.tab{
+  display:inline-block;
+  padding:10px 15px;
+  margin:0 5px;
+  border:1px solid #ccc;
+  cursor:pointer;
+}
+
+.tab.active{
+  background-color:#1a73e8;
+  color:#fff;
+}
+
+.card{
+  display:block;
+  padding:10px;
+  margin:10px auto;
+  border:1px solid #ccc;
+  width:300px;
+  text-decoration:none;
+  color:#000;
+}
+
+#backButton{
+  position:absolute;
+  top:10px;
+  left:10px;
+  display:none; /* hidden on homepage */
+}
 </style>
 </head>
 <body>
 
 <div id="home">
-  <div class="logo">DogSearch 🐾</div>
-  <form class="search-box" onsubmit="return startSearch();">
+  <div class="logo">DogSearch</div>
+  <form class="search-box" onsubmit="startSearch(event)">
     <input id="qHome" placeholder="Search the web">
-    <button type="submit">Search</button>
   </form>
 </div>
 
-<div id="results" style="display:none;">
+<div id="results">
+  <button id="backButton" onclick="goHome()">⬅ Back</button>
+
   <div class="tabs">
     <div class="tab active" id="tabAll">All</div>
     <div class="tab" id="tabImages">Images</div>
     <div class="tab" id="tabNews">News</div>
   </div>
-  <div id="content"></div>
-  <div style="margin-top:20px;">
-    <button onclick="goHome();">⬅ Back</button>
-  </div>
+
+  <div id="content" style="margin-top:50px;"></div>
 </div>
 
 <script>
-var currentTab = "all";
-var homeEl = document.getElementById("home");
-var resEl = document.getElementById("results");
-var qHome = document.getElementById("qHome");
-var content = document.getElementById("content");
+const homeEl=document.getElementById('home');
+const resEl=document.getElementById('results');
+const backBtn=document.getElementById('backButton');
+const qHome=document.getElementById('qHome');
+const content=document.getElementById('content');
 
-function startSearch() {
-  var query = qHome.value.replace(/^\s+|\s+$/g,'');
-  if(!query) return false;
-  showResults(query);
-  return false;
+function startSearch(e){
+  e.preventDefault();
+  const q=qHome.value.trim();
+  if(!q) return;
+  showResults(q);
 }
 
-function goHome() {
-  resEl.style.display = "none";
-  homeEl.style.display = "block";
-  content.innerHTML = "";
-  currentTab = "all";
-  document.getElementById("tabAll").className = "tab active";
-  document.getElementById("tabImages").className = "tab";
-  document.getElementById("tabNews").className = "tab";
+function showResults(q){
+  homeEl.style.display='none';
+  resEl.style.display='flex';
+  backBtn.style.display='block';
+  content.innerHTML='<p>Fetching results for "'+q+'"</p>';
 }
 
-function setTab(tabName) {
-  currentTab = tabName;
-  document.getElementById("tabAll").className = "tab" + (tabName=="all"?" active":"");
-  document.getElementById("tabImages").className = "tab" + (tabName=="images"?" active":"");
-  document.getElementById("tabNews").className = "tab" + (tabName=="news"?" active":"");
-  var query = qHome.value.replace(/^\s+|\s+$/g,'');
-  if(query) search(query);
+function goHome(){
+  homeEl.style.display='flex';
+  resEl.style.display='none';
+  backBtn.style.display='none';
 }
+</script>
 
-/* Add click events */
-document.getElementById("tabAll").onclick = function(){ setTab("all"); };
-document.getElementById("tabImages").onclick = function(){ setTab("images"); };
-document.getElementById("tabNews").onclick = function(){ setTab("news"); };
-
-function showResults(query) {
-  homeEl.style.display = "none";
-  resEl.style.display = "block";
-  search(query);
-}
-
-function search(query) {
-  content.innerHTML = "<p>Searching...</p>";
-  if(currentTab == "all") {
-    /* IE-friendly XMLHttpRequest to DuckDuckGo Instant Answer API */
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if(xhr.readyState==4 && xhr.status==200) {
-        try {
-          var data = JSON.parse(xhr.responseText);
-          var html = "";
-          if(data.AbstractText && data.AbstractText.length>0){
-            html += '<div class="card">'+data.Heading+'<br>'+data.AbstractText+'</div>';
-          } else {
-            html = '<div class="card">No instant answer found, try visiting <a href="https://duckduckgo.com/?q='+encodeURIComponent(query)+'" target="_blank">DuckDuckGo</a></div>';
-          }
-          content.innerHTML = html;
-        } catch(e){
-          content.innerHTML = '<div class="card">Error parsing results.</div>';
-        }
-      }
-    };
-    xhr.open("GET","https://api.duckduckgo.com/?q="
+</body>
+</html>
