@@ -2,44 +2,91 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DogSearch 🐾</title>
+<title>DogSearch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="https://png.pngtree.com/png-clipart/20230916/original/pngtree-golden-retriever-dog-in-a-round-circle-clipart-vector-png-image_12248318.png">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a73e8">
+
+<script>
+(function(){
+  if(window.document && window.document.documentMode){
+    window.location.replace("ie.html");
+  }
+})();
+</script>
 
 <style>
 html,body{margin:0;padding:0;height:100%;font-family:Arial,sans-serif;}
 body{
-  background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)),
-    url('https://images.unsplash.com/photo-1558788353-f76d92427f16?w=1200') center/cover no-repeat;
+  background:
+    url('https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?w=600&auto=format&fit=crop&q=60') left center / 50% 100vh no-repeat,
+    url('https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?w=600&auto=format&fit=crop&q=60') right center / 50% 100vh no-repeat;
+}
+@media (max-width:768px){
+  body{background:url('https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?w=600&auto=format&fit=crop&q=60') center center / cover no-repeat;}
 }
 
 #home{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
-.logo{font-size:clamp(48px,10vw,80px);font-weight:bold;display:flex;line-height:1.1;}
-.logo span{display:inline-block;color:#4285f4;} /* all same color for simplicity */
+.logo{
+  font-size:clamp(48px,10vw,80px);
+  font-weight:bold;
+  display:inline-flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  justify-content:center;
+  line-height:1.1;
+}
+.logo span{display:inline-block;}
+.logo span:nth-child(1){color:#4285f4}
+.logo span:nth-child(2){color:#ff9800}
+.logo span:nth-child(3){color:#fbbc05}
+.logo span:nth-child(4){color:#4285f4}
+.logo span:nth-child(5){color:#34a853}
+.logo span:nth-child(6){color:#ff9800}
+.logo span:nth-child(7){color:#fbbc05}
+.logo span:nth-child(8){color:#4285f4}
+.logo span:nth-child(9){color:#34a853}
+
 .search-box{max-width:580px;width:90%;padding:0 16px;margin-top:15px;}
 input{width:100%;padding:14px 20px;font-size:18px;border-radius:24px;border:1px solid #dfe1e5;outline:none;}
 
 #results{display:none;max-width:1400px;margin:auto;padding:15px;min-height:100vh;}
-.topbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
-.back{cursor:pointer;font-size:22px;}
+.topbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.back{cursor:pointer;font-size:22px;margin-bottom:8px;}
+
 .tabs{display:flex;gap:18px;margin:15px 0;border-bottom:1px solid #ddd;flex-wrap:wrap;}
 .tab{cursor:pointer;color:#5f6368;padding-bottom:8px;}
 .tab.active{color:#1a73e8;border-bottom:3px solid #1a73e8;}
-.card{background:#fff;border-radius:12px;padding:14px 16px;margin:12px 0;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.08);color:#000;text-decoration:none;display:flex;flex-direction:column;gap:6px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
-.grid img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;}
+
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:14px 16px;
+  margin:12px 0;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
+  color:#000;
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.card img{width:28px;height:28px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;}
+.grid img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;max-height:250px;}
+@media(max-width:480px){.search-box{width:95%;}.grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}.grid img{max-height:180px;}}
 </style>
 </head>
 
 <body>
-
 <div id="home">
   <div class="logo">
     <span>D</span><span>o</span><span>g</span><span>S</span><span>e</span><span>a</span><span>r</span><span>c</span><span>h</span>
   </div>
   <form class="search-box" onsubmit="startSearch(event)">
-    <input id="qHome" placeholder="Search with DogSearch 🐾">
+    <input id="qHome" placeholder="Search the web">
   </form>
 </div>
 
@@ -64,102 +111,103 @@ const UNSPLASH="1IF0KThuYgH722kFgZ5TaZ1tyckTiMUri6DxUSeZ-fk";
 const YT="AIzaSyBKN7qNWVOSjIf040epQA579G29IzPxqpI";
 
 let tab="all";
-const homeEl = document.getElementById("home");
-const resEl = document.getElementById("results");
-const qHome = document.getElementById("qHome");
-const qTop = document.getElementById("qTop");
-const content = document.getElementById("content");
+const homeEl=document.getElementById("home");
+const resEl=document.getElementById("results");
+const qHome=document.getElementById("qHome");
+const qTop=document.getElementById("qTop");
+const content=document.getElementById("content");
 
-// URL query ?q=
-function getQuery(){return new URLSearchParams(window.location.search).get("q");}
+const params=new URLSearchParams(location.search);
+const startQ=params.get("q");
+if(startQ){showResults(startQ);}else{history.replaceState({}, "", location.pathname);}
 
-// Init if ?q=
-const startQ = getQuery();
-if(startQ){showResults(startQ);}
-
-// FORM SUBMIT
 function startSearch(e){
   e.preventDefault();
-  const q = qHome.value.trim();
+  const q=qHome.value.trim();
   if(!q) return;
   history.pushState({}, "", "?q="+encodeURIComponent(q));
   showResults(q);
 }
 
-// ENTER on top input
-qTop.onkeydown = e => {
+qTop.onkeydown=e=>{
   if(e.key==="Enter"){
     e.preventDefault();
-    const q = qTop.value.trim();
+    const q=qTop.value.trim();
     if(!q) return;
     history.pushState({}, "", "?q="+encodeURIComponent(q));
-    search(q);
+    search();
   }
 };
 
-// TABS
 document.querySelectorAll(".tab").forEach(t=>{
-  t.onclick=()=>{tab=t.dataset.tab; document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active")); t.classList.add("active"); search(qTop.value.trim());};
+  t.onclick=()=>{
+    tab=t.dataset.tab;
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    search();
+  };
 });
 
-// SHOW RESULTS
 function showResults(q){
   homeEl.style.display="none";
   resEl.style.display="block";
   qTop.value=q;
-  search(q);
+  search();
 }
 
-// GO HOME
 function goHome(){
-  history.replaceState({}, "", window.location.pathname);
+  history.replaceState({}, "", location.pathname);
   resEl.style.display="none";
   homeEl.style.display="flex";
-  qHome.focus();
 }
 
-// SEARCH FUNCTION
-function search(q){
+function card(icon,text,url){
+  return `<a class="card" href="${url}" target="_blank">${icon?`<img src="${icon}">`:''}<span>${text}</span></a>`;
+}
+
+function search(){
+  const q=qTop.value.trim();
   if(!q) return;
-  const enc = encodeURIComponent(q);
-  content.innerHTML="<p>🐾 Sniffing the web...</p>";
+  const enc=encodeURIComponent(q);
+  content.innerHTML="<p>Loading results...</p>";
 
   if(tab==="all"){
     fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://duckduckgo.com/html/?q='+enc)}`)
-      .then(r=>r.json())
-      .then(d=>{
-        const doc = new DOMParser().parseFromString(d.contents,"text/html");
-        const results=[...doc.querySelectorAll('.result__body')];
-        if(!results.length){content.innerHTML="<p>No results found 🐶</p>";return;}
-        content.innerHTML = results.slice(0,10).map(r=>{
-          const a = r.querySelector('.result__a');
-          return `<a class="card" href="${a.href}" target="_blank"><strong>${a.textContent}</strong></a>`;
-        }).join("");
-      }).catch(()=>content.innerHTML="<p>Error loading results 🐾</p>");
+    .then(r=>r.json())
+    .then(d=>{
+      const doc=new DOMParser().parseFromString(d.contents,"text/html");
+      const results=[...doc.querySelectorAll('.result__a')];
+      if(!results.length){content.innerHTML="<p>No results found.</p>";return;}
+      content.innerHTML=results.slice(0,10).map(a=>{
+        return `<a class="card" href="${a.href}" target="_blank"><strong>${a.textContent}</strong></a>`;
+      }).join('');
+    }).catch(()=>content.innerHTML="<p>Error loading results.</p>");
   }
 
   if(tab==="images"){
-    fetch(`https://api.unsplash.com/search/photos?query=${enc}&per_page=18`,{headers:{Authorization:"Client-ID "+UNSPLASH}})
-      .then(r=>r.json()).then(d=>{
-        content.innerHTML=`<div class="grid">${d.results.map(i=>`<img src="${i.urls.regular}">`).join("")}</div>`;
-      });
+    fetch(`https://api.unsplash.com/search/photos?query=${enc}&per_page=18`,{
+      headers:{Authorization:"Client-ID "+UNSPLASH}
+    })
+    .then(r=>r.json())
+    .then(d=>{
+      content.innerHTML=`<div class="grid">${d.results.map(i=>`<img src="${i.urls.regular}">`).join('')}</div>`;
+    });
   }
 
   if(tab==="videos"){
     fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=12&q=${enc}&key=${YT}`)
-      .then(r=>r.json()).then(d=>{
-        content.innerHTML=`<div class="grid">${d.items.map(v=>`
-          <a href="https://youtube.com/watch?v=${v.id.videoId}" target="_blank"><img src="${v.snippet.thumbnails.high.url}"></a>`).join("")}</div>`;
-      });
+    .then(r=>r.json())
+    .then(d=>{
+      content.innerHTML=`<div class="grid">${d.items.map(v=>`<a href="https://youtube.com/watch?v=${v.id.videoId}" target="_blank"><img src="${v.snippet.thumbnails.high.url}"></a>`).join('')}</div>`;
+    });
   }
 
   if(tab==="news"){
     content.innerHTML=
-      `<a class="card" href="https://news.google.com/search?q=${enc}" target="_blank">Google News</a>`+
-      `<a class="card" href="https://www.bing.com/news/search?q=${enc}" target="_blank">Bing News</a>`;
+      card("https://www.google.com/favicon.ico","Google News",`https://news.google.com/search?q=${enc}`)+
+      card("https://www.bing.com/favicon.ico","Bing News",`https://www.bing.com/news/search?q=${enc}`);
   }
 }
 </script>
-
 </body>
 </html>
