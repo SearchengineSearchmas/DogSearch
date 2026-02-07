@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <!-- Favicon -->
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" href="https://png.pngtree.com/png-clipart/20230916/original/pngtree-golden-retriever-dog-in-a-round-circle-clipart-vector-png-image_12248318.png">
 
 <!-- Web App Manifest -->
 <link rel="manifest" href="manifest.json">
-
 
 <script>
 (function(){
@@ -19,30 +19,31 @@
 
 <title>DogSearch</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="https://png.pngtree.com/png-clipart/20230916/original/pngtree-golden-retriever-dog-in-a-round-circle-clipart-vector-png-image_12248318.png">
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a73e8">
 
 <style>
 html,body{margin:0;padding:0;height:100%;font-family:Arial,sans-serif;}
+
 body{
   background:
-    url('https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZG9nfGVufDB8fDB8fHww') left center / 50% 100vh no-repeat,
-    url('https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZG9nfGVufDB8fDB8fHww') right center / 50% 100vh no-repeat;
-}
-@media (max-width:768px){
-  body{background:url('https://plus.unsplash.com/premium_photo-1666777247416-ee7a95235559?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZG9nfGVufDB8fDB8fHww') center center / cover no-repeat;}
+    linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)),
+    url('https://images.unsplash.com/photo-1558788353-f76d92427f16?w=1200');
+  background-size:cover;
+  background-position:center;
 }
 
-#home{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;}
+#home{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
 
 .logo{
   font-size:clamp(48px,10vw,80px);
   font-weight:bold;
-  display:inline-flex;
-  flex-wrap:nowrap;
-  align-items:center;
-  justify-content:center;
+  display:flex;
   line-height:1.1;
 }
 .logo span{display:inline-block;}
@@ -56,14 +57,27 @@ body{
 .logo span:nth-child(8){color:#4285f4}
 .logo span:nth-child(9){color:#34a853}
 
-.search-box{max-width:580px;width:90%;padding:0 16px;}
-input{width:100%;padding:14px 20px;font-size:18px;border-radius:24px;border:1px solid #dfe1e5;}
+.search-box{max-width:580px;width:90%;padding:0 16px;margin-top:15px;}
+input{
+  width:100%;
+  padding:14px 20px;
+  font-size:18px;
+  border-radius:24px;
+  border:1px solid #dfe1e5;
+  outline:none;
+}
 
 #results{display:none;max-width:1400px;margin:auto;padding:15px;min-height:100vh;}
 .topbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
-.back{cursor:pointer;font-size:22px;margin-bottom:8px;}
+.back{cursor:pointer;font-size:22px;}
 
-.tabs{display:flex;gap:18px;margin:15px 0;border-bottom:1px solid #ddd;flex-wrap:wrap;}
+.tabs{
+  display:flex;
+  gap:18px;
+  margin:15px 0;
+  border-bottom:1px solid #ddd;
+  flex-wrap:wrap;
+}
 .tab{cursor:pointer;color:#5f6368;padding-bottom:8px;}
 .tab.active{color:#1a73e8;border-bottom:3px solid #1a73e8;}
 
@@ -81,44 +95,38 @@ input{width:100%;padding:14px 20px;font-size:18px;border-radius:24px;border:1px 
   gap:6px;
 }
 
-.card img{width:28px;height:28px;}
-
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:12px;
 }
+
 .grid img{
   width:100%;
   aspect-ratio:16/9;
   object-fit:cover;
   border-radius:8px;
-  max-height:250px;
-}
-
-@media(max-width:480px){
-  .search-box{width:95%;}
-  .grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
-  .grid img{max-height:180px;}
 }
 </style>
 </head>
 
 <body>
+
 <div id="home">
   <div class="logo">
-    <span>D</span><span>o</span><span>g</span><span>S</span><span>e</span>
-    <span>a</span><span>r</span><span>c</span><span>h</span>
+    <span>D</span><span>o</span><span>g</span>
+    <span>S</span><span>e</span><span>a</span>
+    <span>r</span><span>c</span><span>h</span>
   </div>
   <form class="search-box" onsubmit="startSearch(event)">
-    <input id="qHome" placeholder="Search the web">
+    <input id="qHome" placeholder="Search with DogSearch 🐾">
   </form>
 </div>
 
 <div id="results">
   <div class="topbar">
     <div class="back" onclick="goHome()">⬅</div>
-    <input id="qTop">
+    <input id="qTop" placeholder="Search again">
   </div>
 
   <div class="tabs">
@@ -126,7 +134,6 @@ input{width:100%;padding:14px 20px;font-size:18px;border-radius:24px;border:1px 
     <div class="tab" data-tab="images">Images</div>
     <div class="tab" data-tab="videos">Videos</div>
     <div class="tab" data-tab="news">News</div>
-    
   </div>
 
   <div id="content"></div>
@@ -137,6 +144,7 @@ const UNSPLASH="1IF0KThuYgH722kFgZ5TaZ1tyckTiMUri6DxUSeZ-fk";
 const YT="AIzaSyBKN7qNWVOSjIf040epQA579G29IzPxqpI";
 
 let tab="all";
+
 const homeEl=document.getElementById("home");
 const resEl=document.getElementById("results");
 const qHome=document.getElementById("qHome");
@@ -145,8 +153,12 @@ const content=document.getElementById("content");
 
 const params=new URLSearchParams(location.search);
 const startQ=params.get("q");
-if(startQ && startQ.trim()){showResults(startQ);}
-else{history.replaceState({}, "", location.pathname);}
+
+if(startQ){
+  showResults(startQ);
+}else{
+  history.replaceState({}, "", location.pathname);
+}
 
 function startSearch(e){
   e.preventDefault();
@@ -188,17 +200,11 @@ function goHome(){
   homeEl.style.display="flex";
 }
 
-function card(icon,text,url){
-  return `<a class="card" href="${url}" target="_blank">
-    ${icon?`<img src="${icon}">`:''}<span>${text}</span>
-  </a>`;
-}
-
 function search(){
   const q=qTop.value.trim();
   if(!q) return;
   const enc=encodeURIComponent(q);
-  content.innerHTML="<p>Loading results...</p>";
+  content.innerHTML="<p>🐾 Sniffing the web...</p>";
 
   if(tab==="all"){
     fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://duckduckgo.com/html/?q='+enc)}`)
@@ -206,7 +212,7 @@ function search(){
       .then(d=>{
         const doc=new DOMParser().parseFromString(d.contents,"text/html");
         const results=[...doc.querySelectorAll('.result__body')];
-        if(!results.length){content.innerHTML="<p>No results found.</p>";return;}
+        if(!results.length){content.innerHTML="<p>No results found 🐶</p>";return;}
         content.innerHTML=results.slice(0,10).map(r=>{
           const a=r.querySelector('.result__a');
           const s=r.querySelector('.result__snippet');
@@ -242,10 +248,11 @@ function search(){
 
   if(tab==="news"){
     content.innerHTML=
-      card("https://www.google.com/favicon.ico","Google News",`https://news.google.com/search?q=${enc}`)+
-      card("https://www.bing.com/favicon.ico","Bing News",`https://www.bing.com/news/search?q=${enc}`);
+      `<a class="card" href="https://news.google.com/search?q=${enc}" target="_blank">Google News</a>` +
+      `<a class="card" href="https://www.bing.com/news/search?q=${enc}" target="_blank">Bing News</a>`;
   }
-
+}
 </script>
+
 </body>
 </html>
